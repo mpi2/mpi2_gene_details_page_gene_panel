@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC
+	"-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+	"http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg-flat.dtd"> 
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:svg="http://www.w3.org/2000/svg"
+     >
+
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8"/>
+<title>Mouse for Mouse Informatics JWarren version NCBI_M37 :: Dalliance</title> 
+<style>
+body {font-family: 'helvetica'}
+</style>
+<script language="javascript" src="js/spans.js"></script>
+<script language="javascript" src="js/utils.js"></script>
+<script language="javascript" src="js/das.js"></script>
+<script language="javascript" src="js/browser.js"></script>
+<script language="javascript" src="js/tier.js"></script>
+<script language="javascript" src="js/sequence-tier.js"></script>
+<script language="javascript" src="js/feature-tier.js"></script>
+<script language="javascript" src="js/slider.js"></script>
+<script language="javascript" src="js/domui.js"></script>
+<script language="javascript" src="js/karyoscape.js"></script>
+<script language="javascript" src="js/quant-config.js"></script>
+<script language="javascript" src="js/track-adder.js"></script>
+<script language="javascript" src="js/chainset.js"></script>
+<script language="javascript" src="js/version.js"></script>
+<script language="javascript" src="js/sha1.js"></script>
+<script language="javascript" src="js/sample.js"></script>
+<script language="javascript" src="js/kspace.js"></script>
+<script language="javascript" src="json/json2.js"></script>
+<script language="javascript" src="js/bin.js"></script>
+<script language="javascript" src="js/bigwig.js"></script>
+<script language="javascript" src="js/bam.js"></script>
+<script language="javascript" src="js/twoBit.js"></script>
+<script language="javascript" src="js/SangerMouseSolr.js"></script>
+<script language="javascript" src="js/jquery.js"></script>
+<script language="javascript" src="jszlib/js/inflate.js"></script>
+
+<script language="javascript">
+    localStorage.clear(); 
+     //jw stuff for getting it to open at mgi accession
+          var query = window.location.search.substring(1);
+          
+    var params=query.split('=');
+    if(params.length>1){
+    var mgiAccession=params[1];
+    console.debug('mgiAccession='+mgiAccession);
+ 
+ var chromosome='10';
+ var start=20000000;
+ var stop=20030000;
+    
+         $(function() {
+ $.ajax({
+  'url': 'http://www.sanger.ac.uk/mouseportal/solr/select',
+  'data': {'wt':'json', 'q':mgiAccession},
+  'success': function(data) { 
+      var doc=data.response.docs[0];
+      chromosome=doc.chromosome;
+      start=doc.coord_start-1000;
+      stop=doc.coord_end+1000;
+      console.debug('chromosome='+chromosome+' ' +start+' '+stop);
+      //thisB.setLocation(start, stop, chromosome);
+          //11:96643516,96708880
+var b= new Browser({
+    //1:96650441,106650441
+    chr:        chromosome,
+    viewStart:  start,
+    viewEnd:    stop,
+     noPersist: true,
+
+    coordSystem: {
+        speciesName: 'Mouse',
+        taxon: 10090,
+        auth: 'NCBIM',
+        version: 37
+    },
+
+  chains: {
+    mm8ToMm9: new Chainset('http://www.derkholm.net:8080/das/mm8ToMm9/', 'NCBIM36', 'NCBIM37',
+                             {
+                                speciesName: 'Mouse',
+                                taxon: 10090,
+                                auth: 'NCBIM',
+                                version: 36
+                             })
+  },
+
+
+    sources:      [{name: 'Genome',
+                   uri:  'http://www.derkholm.net:9080/das/mm9comp/',
+                   desc: 'Mouse reference genome build NCBIm37',
+                   tier_type: 'sequence',
+                   provides_entrypoints: true},
+                   {name: 'Genes',
+                   desc: 'Gene structures from Ensembl 58',
+                   uri:  'http://www.derkholm.net:8080/das/mmu_58_37k/',
+                   collapseSuperGroups: true,
+                   provides_karyotype: true,
+                   provides_search: true},
+                   {name:                 'mouse local solr',     
+                       desc:                 'local biomart',
+                       uri:                  'http://localhost:8080/MyDasTemplate/das/mouse/'     
+                       },
+                   {name:                 'Biomart On dev',     
+                       desc:                 'Ikmc Alleles jw version',
+                       uri:                  'http://wwwdev.ebi.ac.uk/mi/PhenotypeArchive/ws/das/ikmcalleles/'     
+                       },
+                       {name:                 'Sanger products',     
+                           desc:                 'IKMC - Knockout Mutant Mouse Alleles',
+                           uri:                  'http://das.sanger.ac.uk/das/ikmc_products/',
+                           stylesheet_uri: 'http://www.biodalliance.org/stylesheets/ikmc-test.xml'
+                       },
+                  {name: 'Repeats',
+                   desc: 'Repeat annotation from Ensembl 58',
+                   uri: 'http://www.derkholm.net:8080/das/mmu_58_37k/',
+                   stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/mouse-repeats.xml'},
+                  {name: 'CpG',
+                   desc: 'CpG observed/expected ratio',
+                   uri: 'http://www.derkholm.net:9080/das/mm9comp/',
+                   stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/cpg.xml'}],
+
+
+  searchEndpoint: new DASSource('http://www.derkholm.net:8080/das/mmu_58_37k/'),
+  karyoEndpoint: new DASSource('http://www.derkholm.net:8080/das/mmu_58_37k/'),
+
+  browserLinks: {
+      Ensembl: 'http://www.ensembl.org/Mus_musculus/Location/View?r=${chr}:${start}-${end}',
+      UCSC: 'http://genome.ucsc.edu/cgi-bin/hgTracks?db=mm9&position=chr${chr}:${start}-${end}'
+  }
+});
+       /* process e.g. data.response.docs... */ },
+  'dataType': 'jsonp',
+  'jsonp': 'json.wrf'});
+});
+    
+}
+        
+        //end of jw stuff
+
+  
+</script>
+</head>
+
+<body>
+
+<h2>Mouse for Mouse Informatics JWarren version NCBI_M37 :: Dalliance</h2>
+<div id='svgHolder'>
+</div>
+
+<div id="log">
+</div>
+
+</body>
+</html>
+

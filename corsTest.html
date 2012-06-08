@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC
+    "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+    "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg-flat.dtd"> 
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      >
+
+    <head>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8"/>
+        <title>Mouse for Mouse Informatics JWarren version NCBI_M37 :: Dalliance</title> 
+        <style>
+            body {font-family: 'helvetica'}
+        </style>
+
+        <script>
+    
+ 
+            var chromosome='10';
+            var start=20000000;
+            var stop=20030000;
+            var dasURI='http://www.derkholm.net:9080/das/mm9comp/';
+ 
+            // Create the XHR object.
+            function createCORSRequest(method, url) {
+                var xhr = new XMLHttpRequest();
+                if ("withCredentials" in xhr) {
+                    // XHR for Chrome/Safari/Firefox.
+                    xhr.open(method, url, true);
+                } else if (typeof XDomainRequest != "undefined") {
+                    // XDomainRequest for IE.
+                    xhr = new XDomainRequest();
+                    xhr.open(method, url);
+                } else {
+                    // CORS not supported.
+                    xhr = null;
+                }
+                return xhr;
+            }
+
+            // Make the actual CORS request.
+            function makeCorsRequest() {
+                // bibliographica.org supports CORS.
+                // var url = 'http://wwwdev.ebi.ac.uk/mi/PhenotypeArchive/ws/das/ikmcalleles/features?segment=11:96654198,96673928';
+                var url='http://www.dasregistry.org/das/servers';
+                var xhr = createCORSRequest('GET', url);
+                if (!xhr) {
+                    console.debug('CORS not supported');
+                    return;
+                }
+
+                // Response handlers.
+                xhr.onload = function() {
+                    var text = xhr.responseText;
+    
+                    console.debug('Response from CORS request to ' + url + ': ' + text);
+                };
+
+                xhr.onerror = function() {
+                    console.debug('Woops, there was an error making the request.');
+                };
+
+                xhr.send();
+            }
+
+            makeCorsRequest();
+
+        </script>
+    </head>
+
+    <body>
+
+        <h2>Mouse for Mouse Informatics JWarren version NCBI_M37 :: Dalliance</h2>
+        <div id='svgHolder'>
+        </div>
+
+        <div id="log">
+        </div>
+
+    </body>
+</html>
+
