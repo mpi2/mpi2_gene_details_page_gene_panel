@@ -152,7 +152,7 @@ font-weight:900;
 .dataset_content {
 overflow: auto;
 }</style>
-<div class="dataset" id="gene_panel_results">
+<div class="dataset" id="gene_panel_results" style="overflow: auto;">
         <script language="javascript" src="js/spans.js"></script>
 <script language="javascript" src="js/utils.js"></script>
 <script language="javascript" src="js/das.js"></script>
@@ -180,6 +180,19 @@ overflow: auto;
 <script language="javascript" src="jszlib/js/inflate.js"></script>
 <!--<script language="javascript" src="dalliance-compiled.js"></script>-->
 <script language="javascript">
+    
+    function makeLink(link_start, link_end, id, link_text){
+        //console.debug('calling create link');
+        var link=link_start+id+link_end;
+        //link to ensembl to where mouse gene is here
+        //http://www.ensembl.org/Mus_musculus/Location/View?g=ENSMUSG00000024673;contigviewbottom=das:http://das.sanger.ac.uk/das/ikmc_products=labels
+        return '<a target="_blank" href="'+link+'">'+link_text+'</a>';
+       
+        
+    }
+    
+    
+    
     //use jquery when document loaded
     $(document).ready(function() {
     localStorage.clear(); 
@@ -189,7 +202,7 @@ overflow: auto;
     var params=query.split('=');
     if(params.length>1){
     var mgiAccession=params[1];
-    console.debug('mgiAccession='+mgiAccession);
+    //console.debug('mgiAccession='+mgiAccession);
       
     
          $(function() {
@@ -201,33 +214,91 @@ overflow: auto;
  var start=20000000;
  var stop=20030000;
       var doc=data.response.docs[0];
+      chromosome=doc.chromosome;
+      start=doc.coord_start;
+      stop=doc.coord_end;
+      if(stop<start){
+          start=doc.coord_end;
+          stop=doc.coord_start;
+      }
+      
       //get all info here from solr response
       var marker_symbol=doc.marker_symbol;
       $("#marker_symbol").html(marker_symbol);
+      var marker_type='-';
+      if(doc.marker_type){
+          marker_type=doc.marker_type;
+           $("#marker_type").html(marker_type);
+      }
+     
        var gene_name=doc.marker_name[0];
        $("#gene_name").html(gene_name);
       //array of synonyms
+      if(doc.synonym){
        var synonyms=doc.synonym[0];
        $("#synonyms").html(synonyms);
+      }
        var geneLocation='Chr'+chromosome+':'+start+'-'+stop;
        $("#geneLocation").html(geneLocation);
-       var ensembl_gene_id=doc.ensembl_gene_id[0];
-       $("#ensembl_gene_id").html(ensembl_gene_id);
-      console.debug(marker_symbol);
+       if(doc.ensembl_gene_id)
+       {
+        var ensembl_gene_id=doc.ensembl_gene_id[0];
+        var ensemblUrl='http://www.ensembl.org/Mus_musculus/geneview?gene=';
+         //compara links
+        //http://www.ensembl.org/Mus_musculus/Location/Compara_Alignments/Image?align=410;db=core;g=ENSMUSG00000022479;r=15:97684856-97741061
+        var ensemblLinksText=makeLink(ensemblUrl,'',ensembl_gene_id,'Gene View')
+            +' '+makeLink('http://www.ensembl.org/Mus_musculus/Location/View?g=',';contigviewbottom=das:http://das.sanger.ac.uk/das/ikmc_products=labels',ensembl_gene_id,'Location View')
+        +' '+makeLink('http://www.ensembl.org/Mus_musculus/Location/Compara_Alignments/Image?align=410;db=core;g=','', ensembl_gene_id, 'Compara View');
+       
+        $("#ensembl_links").html(ensemblLinksText);
+       
+       }
+        //mgi link e.g. http://www.informatics.jax.org/marker/MGI:88321
+       var mgiLink= 'http://www.informatics.jax.org/marker/'+mgiAccession;
+       //$('#mgi_id').html('<a target="_blank" href="'+mgiLink+'">'+mgiAccession+'</a>');
+       $('#mgi_id').html(makeLink('http://www.informatics.jax.org/marker/','',mgiAccession,mgiAccession));
+       var vega_gene_id='-';
+       if(doc.vega_gene_id){
+           vega_gene_id=doc.vega_gene_id[0];
+           //http://vega.sanger.ac.uk/Mus_musculus/geneview?gene=OTTMUSG00000026431&db=core
+           vega_gene_id=makeLink('http://vega.sanger.ac.uk/Mus_musculus/geneview?gene=','&db=core', vega_gene_id, vega_gene_id);
+       }
+       $("#vega_gene_id").html(vega_gene_id);
+       
+       //http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=Graphics&list_uids=22337
+       var ncbi_gene_id='-';
+       
+       if(doc.ncbi_gene_id){
+           
+       
+       ncbi_gene_id=doc.ncbi_gene_id[0];
+       var ncbi_link='http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=Graphics&list_uids=';
+       ncbi_gene_id=makeLink(ncbi_link,'',ncbi_gene_id, ncbi_gene_id);
+       }
+       $("#ncbi_gene_id").html(ncbi_gene_id);
+       
+       if(doc.ccds_id){
+       var ccds_id=doc.ccds_id[0];
+       $("#ccds_id").html(makeLink('http://www.ncbi.nlm.nih.gov/CCDS/CcdsBrowse.cgi?REQUEST=CCDS&DATA=','',ccds_id,ccds_id));
+       }
+       
+       
+       
+      //console.debug(marker_symbol);
       chromosome=doc.chromosome;
       start=doc.coord_start-1000;
       stop=doc.coord_end+1000;
-      console.debug('chromosome='+chromosome+' ' +start+' '+stop);
+      //console.debug('chromosome='+chromosome+' ' +start+' '+stop);
       
-      console.debug('calling jquery');
+      //console.debug('calling jquery');
         
       //thisB.setLocation(start, stop, chromosome);
           //11:96643516,96708880
 var b= new Browser({
     //1:96650441,106650441
     chr:        chromosome,
-    viewStart:  start,
-    viewEnd:    stop,
+    viewStart:  start-1000,
+    viewEnd:    stop+1000,
      noPersist: true,
 
     coordSystem: {
@@ -259,19 +330,34 @@ var b= new Browser({
                    collapseSuperGroups: true,
                    provides_karyotype: true,
                    provides_search: true},
+//               {name: 'transcripts',
+//                   desc: 'transcript structures from Ensembl current',
+//                   uri:  'http://www.ensembl.org/das/Mus_musculus.NCBIM37.transcript/',
+//                   collapseSuperGroups: true,
+//                   provides_karyotype: true,
+//                   provides_search: true},
+//               {name: 'predicted transcripts',
+//                   desc: 'predicted transcript structures from Ensembl current',
+//                   uri:  'http://www.ensembl.org/das/Mus_musculus.NCBIM37.prediction_transcript/',
+//                   collapseSuperGroups: true,
+//                   provides_karyotype: true,
+//                   provides_search: true},
+               
                    {name:                 'ikmc alleles',     
                        desc:                 'ikmc alleles',
-                       uri:                  'http://wwwdev.ebi.ac.uk/mi/PhenotypeArchive/ws/das/ikmcalleles/'     
-                       },
+                       uri:                  /*'http://localhost:8080/MyDasTemplate/das/ikmcalleles/'*/'http://wwwdev.ebi.ac.uk/mi/PhenotypeArchive/ws/das/ikmcalleles/'     
+                   ,collapseSuperGroups: true   
+                   },
                    
-                  {name: 'Repeats',
-                   desc: 'Repeat annotation from Ensembl 58',
-                   uri: 'http://www.derkholm.net:8080/das/mmu_58_37k/',
-                   stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/mouse-repeats.xml'},
-                  {name: 'CpG',
-                   desc: 'CpG observed/expected ratio',
-                   uri: 'http://www.derkholm.net:9080/das/mm9comp/',
-                   stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/cpg.xml'}],
+                  //{name: 'Repeats',
+                 //  desc: 'Repeat annotation from Ensembl 58',
+                  // uri: 'http://www.derkholm.net:8080/das/mmu_58_37k/',
+                  // stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/mouse-repeats.xml'},
+                  //{name: 'CpG',
+                  // desc: 'CpG observed/expected ratio',
+                  // uri: 'http://www.derkholm.net:9080/das/mm9comp/',
+                  // stylesheet_uri: 'http://www.derkholm.net/dalliance-test/stylesheets/cpg.xml'}
+                 ],
 
 
   searchEndpoint: new DASSource('http://www.derkholm.net:8080/das/mmu_58_37k/'),
@@ -282,7 +368,7 @@ var b= new Browser({
       UCSC: 'http://genome.ucsc.edu/cgi-bin/hgTracks?db=mm9&position=chr${chr}:${start}-${end}'
   },
   
-  forceWidth: 1000
+  forceWidth: 750
 });//end of dalliance constructor
        /* process e.g. data.response.docs... */ },
   'dataType': 'jsonp',
@@ -295,25 +381,59 @@ var b= new Browser({
 });
 
         //end of jw stuff
-
-  
+//toggles for ids and Omim
+ 
+$(document).ready(function()
+{
+  //hide the all of the element with class msg_body
+  $(".msg_body").hide();
+  //toggle the componenet with class msg_body
+  $(".msg_head").click(function()
+  {
+    $(this).next(".msg_body").slideToggle(600);
+  });
+});
+</script> 
 </script>
 
-<h2 class="heading">
-		Gene Panel</h2>
-<div id="mainGeneInfo">
-    <h3 id="marker_symbol"></h3>
+
+<div id='svgHolder' style="float:right; ">
+</div>
+<div id="mainGeneInfo" style="width: 60%">
+    <h4 class="heading">
+		Gene Panel</h4>
+    <h2 class="heading" id="marker_symbol"></h2>
+    <button type="button" style="background-color:lightgreen">Express Interest</button>
+    
+<style type="text/css">
+.gene-data {background:#FFFFFF;}
+</style>
     <table>
-        <tr><td>Gene name:</td><td id="gene_name"></td></tr>
-        <tr><td>Synonyms:</td><td><div id="synonyms"></div></td></tr>
-        <tr><td>Gene Location:</td><td><div id="geneLocation"></div></td></tr>
-        <tr><td>Ensembl Ids:</td><td><div id="ensembl_gene_id"></div></td></tr>
+        <tr class="odd"><td>Gene name:</td><td class="gene-data" id="gene_name" ></td></tr>
+        <tr class="even"><td>Gene Type:</td><td class="gene-data"id="marker_type"></td></tr>
+        <tr class="odd"><td>Synonyms:</td><td class="gene-data" id="synonyms" style="background:#FFFFFF"></td></tr>
+        <tr class="even"><td>Gene Location:</td><td class="gene-data" id="geneLocation" style="background:#FFFFFF"></td></tr>
+        <tr class="odd"><td>Ensembl Links:</td><td class="gene-data" id="ensembl_links" style="background:#FFFFFF"></td></tr>
+        <tr class="even"><td>MGI Id:</td><td class="gene-data" id="mgi_id" style="background:#FFFFFF"></td></tr>
+    </table>
+    <h3 class="msg_head" style="cursor: pointer;">Show/Hide More Identifiers </h3>
+<div class="msg_body">
+        <table>
+        <tr class="odd"><td>Vega Id:</td><td id="vega_gene_id" style="background:#FFFFFF"></td></tr>
+        <tr class="even"><td>NCBI Id:</td><td id="ncbi_gene_id" style="background:#FFFFFF"></td></tr>
+        <tr class="odd"><td>CCDS Id:</td><td id="ccds_id" style="background:#FFFFFF"></td></tr>
+        </table>
+</div>
+<!--<h3 class="msg_head" style="cursor: pointer;">Show/Hide Extra links </h3>
+<div class="msg_body">
+    <table>
+        <tr><td>Extra link:</td><td><div id="link_id"></div></td></tr>
+        <tr><td>more links:</td><td><div id="link_id2"></div></td></tr>
+       
     </table>
     
+</div>-->
     
-    
-</div>
-<div id='svgHolder'>
 </div>
 </div>
 <div class="dataset" id="phenotyping_panel_results">
