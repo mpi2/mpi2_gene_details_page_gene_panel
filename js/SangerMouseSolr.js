@@ -4,7 +4,7 @@
 //get chromsome, start and stop for an mgi accession
 function getLocationForMgi(mgiAccession) {
     var url='http://www.sanger.ac.uk/mouseportal/solr/select?q=MGI:105369&wt=json';
-    console.debug(url);
+    //console.debug(url);
     this.doCrossDomainRequest(url, function(responseXML) {
             if (!responseXML) {
                 return callback([]);
