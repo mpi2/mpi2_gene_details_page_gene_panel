@@ -21,7 +21,7 @@ function Browser(opts) {
     if (!opts) {
         opts = {};
     }
-console.debug('calling dalliance browser constructor');
+//console.debug('calling dalliance browser constructor');
     this.sources = [];
     this.tiers = [];
 
@@ -604,7 +604,7 @@ Browser.prototype.mouseDownHandler = function(ev)
 var TAGVAL_NOTE_RE = new RegExp('^([A-Za-z]+)=(.+)');
 
 Browser.prototype.featurePopup = function(ev, feature, group){
-    console.log('featurePopup called blah');
+    //console.log('featurePopup called blah');
     if (!feature) feature = {};
     if (!group) group = {};
 
@@ -614,9 +614,9 @@ Browser.prototype.featurePopup = function(ev, feature, group){
     table.style.width = '100%';
 
     var name = pick(group.type, feature.type);
-    console.log('name='+name);
+    //console.log('name='+name);
     var fid = pick(feature.label,group.label, group.id, feature.id);
-    console.log('featureId='+feature.id);
+    //console.log('featureId='+feature.id);
     if (fid && fid.indexOf('__dazzle') != 0) {
         name = name + ': ' + fid;
     }
@@ -657,7 +657,7 @@ Browser.prototype.featurePopup = function(ev, feature, group){
     }
     {
         var links = maybeConcat(group.links, feature.links);
-        console.debug(links);
+        //console.debug(links);
         
         
         if (links && links.length > 0) {  
@@ -666,7 +666,7 @@ Browser.prototype.featurePopup = function(ev, feature, group){
                 makeElement('td', links.map(function(l) {
                     //<img src="url" alt="some_text"/>
                 if(l.desc=='Cassette Image'){
-                    console.debug(l.desc);
+                   // console.debug(l.desc);
                 return makeElement('div',makeElement('a', makeElement('img', l.desc, {width:320, src: l.uri}), {href:l.uri, target: '_new'}));//'<img src="http://www.knockoutmouse.org/targ_rep/alleles/37256/allele-image" alt="some_text"/>');
                 }
                 //if not image do something else here
@@ -2071,7 +2071,7 @@ Browser.prototype.zoom = function(factor) {
 Browser.prototype.setLocation = function(newMin, newMax, newChr) {
     newMin = newMin|0;
     newMax = newMax|0;
-console.debug('calling setLocation');
+//console.debug('calling setLocation');
     if (newChr && (newChr != this.chr)) {
 	if (!this.entryPoints) {
             throw 'Need entry points';
