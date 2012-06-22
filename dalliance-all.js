@@ -4194,8 +4194,6 @@ function dasNotesOf(element)
 }
 
 function doCrossDomainRequest(url, handler, credentials) {
-    // TODO: explicit error handlers?
-console.debug('calling cross domain');
     if (window.XDomainRequest) {
 	var req = new XDomainRequest();
 	req.onload = function() {
