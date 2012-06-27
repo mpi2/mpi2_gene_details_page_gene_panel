@@ -173,6 +173,9 @@ overflow: auto;
 }</style>
 <div class="dataset" id="gene_panel_results" style="overflow: auto;">
 	<script language="javascript" src="https://raw.github.com/mpi2/mpi2_gene_details_page_gene_panel/master/dalliance-all.js"></script>
+	<script language="javascript" src="https://raw.github.com/mpi2/mpi2_gene_details_page_gene_panel/master/js/jquery.getUrlParam.js"></script>
+	
+	
 	<script language="javascript">
     
     function makeLink(link_start, link_end, id, link_text){
@@ -188,6 +191,10 @@ overflow: auto;
     function errorsToPanels(errortext){
     	
         $('#block-system-main').html(errortext);
+    }
+    
+    function supportsSvg(){
+    	return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
     }
     
     
@@ -212,9 +219,7 @@ overflow: auto;
  var start=20000000;
  var stop=20030000;
   if(data.response.numFound ==0){
-      	alert(data.response.numFound);
       	errorsToPanels('No gene found for this id '+mgiAccession);
-      	return;
       }
       var doc=data.response.docs[0];
       chromosome=doc.chromosome;
@@ -297,8 +302,10 @@ overflow: auto;
         
       //thisB.setLocation(start, stop, chromosome);
       
-  if($.browser.msie){
-  	var dontUseIEString='For a more interactive and informative gene image please use a new browser not Ineternet Explorer e.g. <a href="http://www.mozilla.com/firefox/">Firefox</a> 3.6+, <a href="http://www.google.com/chrome">Google Chrome</a>, and <a href="http://www.apple.com/safari/">Safari</a> 5 or newer</p>';
+  //if($.browser.msie){
+  	if(!supportsSvg()){
+  	
+  	var dontUseIEString='For a more interactive and informative gene image please use a newish browser e.g. <a href="http://www.mozilla.com/firefox/">Firefox</a> 3.6+, <a href="http://www.google.com/chrome">Google Chrome</a>, and <a href="http://www.apple.com/safari/">Safari</a> 5 or newer</p>';
   	var gbrowseimage='<a href="http://gbrowse.informatics.jax.org/cgi-bin/gbrowse/mouse_current?start='+start+';stop='+stop+';ref='+chromosome+'"><img border="0" src="http://gbrowse.informatics.jax.org/cgi-bin/gbrowse_img/thumbs_current?abs=1;options=Everything;width=200;name='+chromosome+':'+start+'..'+stop+'"></a>';
   	$('#svgHolder').html(dontUseIEString+gbrowseimage);
 
