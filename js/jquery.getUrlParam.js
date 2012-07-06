@@ -27,7 +27,7 @@ jQuery.fn.extend({
 	  var returnVal = new Array();
 	  var qString = null;
 	  
-	  if ($(this).attr("nodeName")=="#document") {
+	  if (jQuery(this).attr("nodeName")=="#document") {
 	  	//document-handler
 		
 		if (window.location.search.search(strParamName) > -1 ){
@@ -35,16 +35,16 @@ jQuery.fn.extend({
 			qString = window.location.search.substr(1,window.location.search.length).split("&");
 		}
 			
-	  } else if ($(this).attr("src")!="undefined") {
+	  } else if (jQuery(this).attr("src")!="undefined") {
 	  	
-	  	var strHref = $(this).attr("src")
+	  	var strHref = jQuery(this).attr("src")
 	  	if ( strHref.indexOf("?") > -1 ){
 	    	var strQueryString = strHref.substr(strHref.indexOf("?")+1);
 	  		qString = strQueryString.split("&");
 	  	}
-	  } else if ($(this).attr("href")!="undefined") {
+	  } else if (jQuery(this).attr("href")!="undefined") {
 	  	
-	  	var strHref = $(this).attr("href")
+	  	var strHref = jQuery(this).attr("href")
 	  	if ( strHref.indexOf("?") > -1 ){
 	    	var strQueryString = strHref.substr(strHref.indexOf("?")+1);
 	  		qString = strQueryString.split("&");
