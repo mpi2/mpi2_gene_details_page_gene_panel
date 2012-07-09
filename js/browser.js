@@ -1014,94 +1014,94 @@ Browser.prototype.realInit = function(opts) {
     this.makeTooltip(resetButton, 'Reset the browser to a default state');
     main.appendChild(resetButton);
 
-    var saveButton = this.icons.createButton('export', main, 30, 30);
-    saveButton.setAttribute('transform', 'translate(220, 10)');
-    this.makeTooltip(saveButton, 'Export the current genome display as a vector graphics file');
-    main.appendChild(saveButton);
-    var savePopupHandle;
-    saveButton.addEventListener('mousedown', function(ev) {
-        ev.stopPropagation();ev.preventDefault();
-        var showing = savePopupHandle && savePopupHandle.displayed;
-        thisB.removeAllPopups();
-        
-        if (showing) {
-            return;
-        }
-
-        var saveDoc = document.implementation.createDocument(NS_SVG, 'svg', null);
-        var saveWidth = thisB.svgRoot.getAttribute('width')|0;
-        saveDoc.documentElement.setAttribute('width', saveWidth);
-        saveDoc.documentElement.setAttribute('height', thisB.svgRoot.getAttribute('height'));
-
-        var saveRoot = makeElementNS(NS_SVG, 'g', null, {
-            fontFamily: 'helvetica'
-        });
-        saveDoc.documentElement.appendChild(saveRoot);
-        var dallianceAnchor = makeElementNS(NS_SVG, 'text', 'Graphics from Dalliance ' + VERSION, {
-                x: 80,
-                y: 30,
-                strokeWidth: 0,
-                fill: 'black',
-                fontSize: '12pt'
-        });
-        thisB.svgRoot.appendChild(dallianceAnchor);
-        var daWidth = dallianceAnchor.getBBox().width;
-        thisB.svgRoot.removeChild(dallianceAnchor);
-        dallianceAnchor.setAttribute('x', saveWidth - daWidth - 60);
-        saveRoot.appendChild(dallianceAnchor);
-        // dallianceAnchor.setAttributeNS(NS_XLINK, 'xlink:href', 'http://www.biodalliance.org/');
-        
-        var chrLabel = thisB.chr;
-        if (chrLabel.indexOf('chr') < 0) {
-            chrLabel = 'chr' + chrLabel;
-        }
-        var fullLabel = chrLabel + ':' + (thisB.viewStart|0) + '..' + (thisB.viewEnd|0);
-        saveRoot.appendChild(makeElementNS(NS_SVG, 'text', fullLabel, {
-            x: 40,
-            y: 30,
-            strokeWidth: 0,
-            fill: 'black',
-            fontSize: '12pt'
-        })); 
-
-        saveRoot.appendChild(labelClip.cloneNode(true));
-        saveRoot.appendChild(thisB.dasLabelHolder.cloneNode(true));
-        saveRoot.appendChild(featureClip.cloneNode(true));
-        saveRoot.appendChild(thisB.dasTierHolder.cloneNode(true));
-
-        var svgButton = makeElement('input', null, {
-            type: 'radio',
-            name: 'format',
-            value: 'svg',
-            checked: true
-        });
-        var pdfButton = makeElement('input', null, {
-            type: 'radio',
-            name: 'format',
-            value: 'pdf'
-        });
-        var saveForm = makeElement('form', [makeElement('p', "To work around restrictions on saving files from web applications, image export currently requires transmission of the browser's current state to a remote server.  Depending on connection speed, this can take a few seconds -- please be patient."),
-                                            makeElement('p', 'The download links only work once, so if you wish to keep or share your exported images, please save a copy on your computer'),
-                                            svgButton, 'SVG', makeElement('br'),
-                                            pdfButton, 'PDF', makeElement('br'),
-                                            makeElement('br'),
-                                            makeElement('input', null, {type: 'hidden',  name: 'svgdata', value: new XMLSerializer().serializeToString(saveDoc)}),
-                                            makeElement('input', null, {type: 'submit'})],
-                                   {action: thisB.exportServer + 'browser-image.svg', method: 'POST'});
-        svgButton.addEventListener('click', function(cev) {
-            saveForm.setAttribute('action', thisB.exportServer + 'browser-image.svg');
-        }, false);
-        pdfButton.addEventListener('click', function(cev) {
-            saveForm.setAttribute('action', thisB.exportServer + 'browser-image.pdf');
-        }, false);
-        saveForm.addEventListener('submit', function(sev) {
-            setTimeout(function() {
-                thisB.removeAllPopups();
-            }, 200);
-            return true;
-        }, false);
-        savePopupHandle = thisB.popit(ev, 'Export', saveForm, {width: 400});
-    }, false);
+//    var saveButton = this.icons.createButton('export', main, 30, 30);
+//    saveButton.setAttribute('transform', 'translate(220, 10)');
+//    this.makeTooltip(saveButton, 'Export the current genome display as a vector graphics file');
+//    main.appendChild(saveButton);
+//    var savePopupHandle;
+//    saveButton.addEventListener('mousedown', function(ev) {
+//        ev.stopPropagation();ev.preventDefault();
+//        var showing = savePopupHandle && savePopupHandle.displayed;
+//        thisB.removeAllPopups();
+//        
+//        if (showing) {
+//            return;
+//        }
+//
+//        var saveDoc = document.implementation.createDocument(NS_SVG, 'svg', null);
+//        var saveWidth = thisB.svgRoot.getAttribute('width')|0;
+//        saveDoc.documentElement.setAttribute('width', saveWidth);
+//        saveDoc.documentElement.setAttribute('height', thisB.svgRoot.getAttribute('height'));
+//
+//        var saveRoot = makeElementNS(NS_SVG, 'g', null, {
+//            fontFamily: 'helvetica'
+//        });
+//        saveDoc.documentElement.appendChild(saveRoot);
+//        var dallianceAnchor = makeElementNS(NS_SVG, 'text', 'Graphics from Dalliance ' + VERSION, {
+//                x: 80,
+//                y: 30,
+//                strokeWidth: 0,
+//                fill: 'black',
+//                fontSize: '12pt'
+//        });
+//        thisB.svgRoot.appendChild(dallianceAnchor);
+//        var daWidth = dallianceAnchor.getBBox().width;
+//        thisB.svgRoot.removeChild(dallianceAnchor);
+//        dallianceAnchor.setAttribute('x', saveWidth - daWidth - 60);
+//        saveRoot.appendChild(dallianceAnchor);
+//        // dallianceAnchor.setAttributeNS(NS_XLINK, 'xlink:href', 'http://www.biodalliance.org/');
+//        
+//        var chrLabel = thisB.chr;
+//        if (chrLabel.indexOf('chr') < 0) {
+//            chrLabel = 'chr' + chrLabel;
+//        }
+//        var fullLabel = chrLabel + ':' + (thisB.viewStart|0) + '..' + (thisB.viewEnd|0);
+//        saveRoot.appendChild(makeElementNS(NS_SVG, 'text', fullLabel, {
+//            x: 40,
+//            y: 30,
+//            strokeWidth: 0,
+//            fill: 'black',
+//            fontSize: '12pt'
+//        })); 
+//
+//        saveRoot.appendChild(labelClip.cloneNode(true));
+//        saveRoot.appendChild(thisB.dasLabelHolder.cloneNode(true));
+//        saveRoot.appendChild(featureClip.cloneNode(true));
+//        saveRoot.appendChild(thisB.dasTierHolder.cloneNode(true));
+//
+//        var svgButton = makeElement('input', null, {
+//            type: 'radio',
+//            name: 'format',
+//            value: 'svg',
+//            checked: true
+//        });
+//        var pdfButton = makeElement('input', null, {
+//            type: 'radio',
+//            name: 'format',
+//            value: 'pdf'
+//        });
+//        var saveForm = makeElement('form', [makeElement('p', "To work around restrictions on saving files from web applications, image export currently requires transmission of the browser's current state to a remote server.  Depending on connection speed, this can take a few seconds -- please be patient."),
+//                                            makeElement('p', 'The download links only work once, so if you wish to keep or share your exported images, please save a copy on your computer'),
+//                                            svgButton, 'SVG', makeElement('br'),
+//                                            pdfButton, 'PDF', makeElement('br'),
+//                                            makeElement('br'),
+//                                            makeElement('input', null, {type: 'hidden',  name: 'svgdata', value: new XMLSerializer().serializeToString(saveDoc)}),
+//                                            makeElement('input', null, {type: 'submit'})],
+//                                   {action: thisB.exportServer + 'browser-image.svg', method: 'POST'});
+//        svgButton.addEventListener('click', function(cev) {
+//            saveForm.setAttribute('action', thisB.exportServer + 'browser-image.svg');
+//        }, false);
+//        pdfButton.addEventListener('click', function(cev) {
+//            saveForm.setAttribute('action', thisB.exportServer + 'browser-image.pdf');
+//        }, false);
+//        saveForm.addEventListener('submit', function(sev) {
+//            setTimeout(function() {
+//                thisB.removeAllPopups();
+//            }, 200);
+//            return true;
+//        }, false);
+//        savePopupHandle = thisB.popit(ev, 'Export', saveForm, {width: 400});
+//    }, false);
 
     this.bin = this.icons.createIcon('bin', main);
     this.bin.setAttribute('transform', 'translate(10, 18)');
