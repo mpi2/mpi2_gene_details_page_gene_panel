@@ -51,7 +51,7 @@ function doCrossDomainRequest(url, handler, credentials) {
 	req.send('');
     } else {
 	var req = new XMLHttpRequest();
-
+	req.overrideMimeType('text/xml');
 	req.onreadystatechange = function() {
 	    if (req.readyState == 4) {
               if (req.status == 200 || req.status == 0) {
