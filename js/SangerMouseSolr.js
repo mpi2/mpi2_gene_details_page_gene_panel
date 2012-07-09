@@ -36,37 +36,6 @@ function getLocationForMgi(mgiAccession) {
     
 }
 
-function doCrossDomainRequest(url, handler, credentials) {
-    // TODO: explicit error handlers?
-
-    if (window.XDomainRequest) {
-	var req = new XDomainRequest();
-	req.onload = function() {
-	    var dom = new ActiveXObject("Microsoft.XMLDOM");
-	    dom.async = false;
-	    dom.loadXML(req.responseText);
-	    handler(dom);
-	}
-	req.open("get", url);
-	req.send('');
-    } else {
-	var req = new XMLHttpRequest();
-
-	req.onreadystatechange = function() {
-	    if (req.readyState == 4) {
-              if (req.status == 200 || req.status == 0) {
-		  handler(req.responseXML, req);
-	      }
-            }
-	};
-	req.open("get", url, true);
-	if (credentials) {
-	    req.withCredentials = true;
-	}
-	req.send('');
-    }
-}
-
 DASSource.prototype.doCrossDomainRequest = function(url, handler) {
     return doCrossDomainRequest(url, handler, this.credentials);
 }

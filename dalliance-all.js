@@ -36,37 +36,6 @@ function getLocationForMgi(mgiAccession) {
     
 }
 
-function doCrossDomainRequest(url, handler, credentials) {
-    // TODO: explicit error handlers?
-
-    if (window.XDomainRequest) {
-	var req = new XDomainRequest();
-	req.onload = function() {
-	    var dom = new ActiveXObject("Microsoft.XMLDOM");
-	    dom.async = false;
-	    dom.loadXML(req.responseText);
-	    handler(dom);
-	}
-	req.open("get", url);
-	req.send('');
-    } else {
-	var req = new XMLHttpRequest();
-	req.overrideMimeType('text/xml');
-	req.onreadystatechange = function() {
-	    if (req.readyState == 4) {
-              if (req.status == 200 || req.status == 0) {
-		  handler(req.responseXML, req);
-	      }
-            }
-	};
-	req.open("get", url, true);
-	if (credentials) {
-	    req.withCredentials = true;
-	}
-	req.send('');
-    }
-}
-
 DASSource.prototype.doCrossDomainRequest = function(url, handler) {
     return doCrossDomainRequest(url, handler, this.credentials);
 }/* -*- mode: javascript; c-basic-offset: 4; indent-tabs-mode: nil -*- */
@@ -3721,7 +3690,6 @@ function DASLink(desc, uri) {
 
 DASSource.prototype.features = function(segment, options, callback) {
     options = options || {};
-
     var dasURI;
     if (this.uri.indexOf('http://') == 0) {
         dasURI = this.uri + 'features?';
@@ -3760,7 +3728,8 @@ DASSource.prototype.features = function(segment, options, callback) {
     // Feature/group-by-ID stuff?
     
     this.doCrossDomainRequest(dasURI, function(responseXML, req) {
-
+    	
+    	
 	if (!responseXML) {
             var msg;
             if (req.status == 0) {
@@ -4194,6 +4163,7 @@ function dasNotesOf(element)
 }
 
 function doCrossDomainRequest(url, handler, credentials) {
+	
     if (window.XDomainRequest) {
 	var req = new XDomainRequest();
 	req.onload = function() {
@@ -4206,14 +4176,20 @@ function doCrossDomainRequest(url, handler, credentials) {
 	req.send('');
     } else {
 	var req = new XMLHttpRequest();
-
+	req.overrideMimeType('text/xml');
 	req.onreadystatechange = function() {
 	    if (req.readyState == 4) {
               if (req.status == 200 || req.status == 0) {
+            	  
+            		  
+            	  
+            	  
 		  handler(req.responseXML, req);
 	      }
             }
 	};
+	
+	//console.log('sending get with url='+url);
 	req.open("get", url, true);
 	if (credentials) {
 	    req.withCredentials = true;
