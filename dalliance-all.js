@@ -3691,7 +3691,7 @@ function DASLink(desc, uri) {
 DASSource.prototype.features = function(segment, options, callback) {
     options = options || {};
     var dasURI;
-    if (this.uri.indexOf('http://') == 0) {
+    if (this.uri.indexOf('http://') == 0 ||this.uri.indexOf('https://') == 0) {
         dasURI = this.uri + 'features?';
 
 	if (segment) {
